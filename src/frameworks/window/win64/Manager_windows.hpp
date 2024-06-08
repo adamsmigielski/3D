@@ -26,28 +26,55 @@
 
 /**
 * @author Adam Œmigielski
-* @file Platform.hpp
+* @file Manager.hpp
 **/
 
-#pragma once
+#ifndef O8_WS_WINDOWS_MANAGER_HPP
+#define O8_WS_WINDOWS_MANAGER_HPP
 
-#include <stdint.h>
+#include <Utilities\containers\IntrusiveList.hpp> /* IntrusiveList::List */
+#include <O8\WS\Manager.hpp>				      /* Manager */
 
-/* DLL */
-#define DLL_EXPORT __declspec(dllexport)
-
-#define DLL_IMPORT __declspec(dllimport)
-
-/* Typedefs */
-namespace Platform
+namespace O8
 {
-    typedef int8_t       int8;
-    typedef uint8_t      uint8;
-    typedef int16_t      int16;
-    typedef uint16_t     uint16;
-    typedef int32_t      int32;
-    typedef uint32_t     uint32;
-    typedef unsigned int uint;
-    typedef int64_t      int64;
-    typedef uint64_t     uint64;
+	namespace WS
+	{
+        class Window_windows;
+
+		class Manager_windows : public Manager, public Containers::IntrusiveList::List<Window_windows>
+		{
+		public:
+            Manager_windows();
+            virtual ~Manager_windows();
+
+            /* Event processing */
+            virtual Platform::int32 Start_event_processing();
+            virtual Platform::int32 Stop_event_processing();
+            virtual Platform::int32 Process_events();
+
+            /* Window management */
+            virtual Window * Create_window();
+
+		private:
+			void destroy_windows();
+			void loop();
+
+			//loop
+			enum class loop_state
+			{
+				Unknown,
+				Halt,
+				Stoping,
+				Starting,
+				Run,
+			};
+
+			loop_state m_loop_state;
+		};
+	}
 }
+
+/* DL entry points */
+UTILITIES_API_DECORATION DLL_EXPORT O8::WS::Manager * UTILITIES_API Create_manager();
+
+#endif /* O8_WS_WINDOWS_MANAGER_HPP */

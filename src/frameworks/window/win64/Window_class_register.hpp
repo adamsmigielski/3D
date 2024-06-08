@@ -26,28 +26,40 @@
 
 /**
 * @author Adam Œmigielski
-* @file Platform.hpp
+* @file Window_class_register.hpp
 **/
 
-#pragma once
+#ifndef O8_WS_WINDOWS_WINDOW_CLASS_REGISTER_HPP
+#define O8_WS_WINDOWS_WINDOW_CLASS_REGISTER_HPP
 
-#include <stdint.h>
+#include <Utilities\containers\Singleton.hpp>
 
-/* DLL */
-#define DLL_EXPORT __declspec(dllexport)
-
-#define DLL_IMPORT __declspec(dllimport)
-
-/* Typedefs */
-namespace Platform
+namespace O8
 {
-    typedef int8_t       int8;
-    typedef uint8_t      uint8;
-    typedef int16_t      int16;
-    typedef uint16_t     uint16;
-    typedef int32_t      int32;
-    typedef uint32_t     uint32;
-    typedef unsigned int uint;
-    typedef int64_t      int64;
-    typedef uint64_t     uint64;
+    namespace WS
+    {
+        class Window_class_register : public Containers::Singleton<Window_class_register>
+        {
+            /* Singleton needs access to constructor */
+            friend class Containers::Singleton<Window_class_register>;
+
+        public:
+            ~Window_class_register();
+
+            const char * Get_class_name() const;
+
+        private:
+            Window_class_register();
+
+            static LRESULT CALLBACK window_procedure(
+                HWND hwnd,
+                UINT msg,
+                WPARAM wParam,
+                LPARAM lParam);
+
+            static const char * s_window_class_name;
+        };
+    }
 }
+
+#endif /* O8_WS_WINDOWS_WINDOW_CLASS_REGISTER_HPP */

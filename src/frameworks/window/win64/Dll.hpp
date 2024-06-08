@@ -1,6 +1,6 @@
 /** License
-*
-* Copyright (c) 2015 Adam Œmigielski
+* 
+* Copyright (c) 2014 Adam Œmigielski
 *
 *
 *  Permission is hereby granted, free of charge, to any person obtaining a
@@ -26,28 +26,16 @@
 
 /**
 * @author Adam Œmigielski
-* @file Platform.hpp
+* @file Dll.hpp
 **/
 
-#pragma once
+#ifndef O8_WS_DLL_HPP
+#define O8_WS_DLL_HPP
 
-#include <stdint.h>
+#if defined WS_PROJECT_DLL
+#define WS_DLL DLL_EXPORT
+#else
+#define WS_DLL DLL_IMPORT
+#endif
 
-/* DLL */
-#define DLL_EXPORT __declspec(dllexport)
-
-#define DLL_IMPORT __declspec(dllimport)
-
-/* Typedefs */
-namespace Platform
-{
-    typedef int8_t       int8;
-    typedef uint8_t      uint8;
-    typedef int16_t      int16;
-    typedef uint16_t     uint16;
-    typedef int32_t      int32;
-    typedef uint32_t     uint32;
-    typedef unsigned int uint;
-    typedef int64_t      int64;
-    typedef uint64_t     uint64;
-}
+#endif /* O8_WS_DLL_HPP */
