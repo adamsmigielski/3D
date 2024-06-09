@@ -29,13 +29,13 @@
 * @file Window_class_register.cpp
 **/
 
-#include "PCH.hpp"
+#include "pch.hpp"
 
 #include "Window_class_register.hpp"
 
-namespace O8
+namespace Window
 {
-    namespace WS
+    namespace win64
     {
         const char * Window_class_register::s_window_class_name = "O8DefaultWindowClass";
 

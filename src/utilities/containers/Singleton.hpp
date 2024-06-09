@@ -26,38 +26,65 @@
 
 /**
 * @author Adam Œmigielski
-* @file Window_class_register.hpp
+* @file Singleton.hpp
 **/
 
 #pragma once
 
-#include <Utilities\containers\Singleton.hpp>
-
-namespace Window
+namespace Containers
 {
-    namespace win64
+    template <class T>
+    class Singleton
     {
-        class Window_class_register : public Containers::Singleton<Window_class_register>
-        {
-            /* Singleton needs access to constructor */
-            friend class Containers::Singleton<Window_class_register>;
+    public:
+        using value_type = T;
+        using pointer = T *;
 
-        public:
-            ~Window_class_register();
+        virtual ~Singleton();
 
-            const char * Get_class_name() const;
+        static pointer Get_singleton();
+        static void Release();
 
-        private:
-            Window_class_register();
+    protected:
+        Singleton();
 
-            static LRESULT CALLBACK window_procedure(
-                HWND hwnd,
-                UINT msg,
-                WPARAM wParam,
-                LPARAM lParam);
+    private:
+        static pointer s_singleton;
+    };
 
-            static const char * s_window_class_name;
-        };
+    template <class T>
+    Singleton<T>::Singleton()
+    {
+        s_singleton = (pointer) this;
     }
-}
 
+    template <class T>
+    Singleton<T>::~Singleton()
+    {
+        s_singleton = nullptr;
+    }
+
+    template <class T>
+    typename Singleton<T>::pointer Singleton<T>::Get_singleton()
+    {
+        if (nullptr == s_singleton)
+        {
+            new T;
+        }
+
+        return s_singleton;
+    }
+
+    template <typename T>
+    void Singleton<T>::Release()
+    {
+        if (nullptr != s_singleton)
+        {
+            auto singleton = s_singleton;
+            delete singleton;
+        }
+    }
+
+    template <class T>
+    typename Singleton<T>::pointer Singleton<T>::s_singleton = nullptr;
+}

@@ -35,57 +35,58 @@
 
 namespace Window
 {
-	namespace win64
-	{
-		class Window : public ::Window::Window
-		{
-		public:
-			/* Creation and initialization */
-			Window();
-			virtual ~Window();
+    namespace win64
+    {              
+        ///////////////////////////////////////////////////////////////
+        class Window : public ::Window::Window
+        {
+        public:
+            /* Creation and initialization */
+            Window();
+            virtual ~Window();
 
-			virtual Platform::int32 Init(
-				Event_handler * handler,
-				Platform::int32 x,
-				Platform::int32 y,
-				Platform::int32 width,
-				Platform::int32 height,
-				const char * title);
-			virtual Platform::int32 Init(
-				Native native,
-				Event_handler * handler);
+            virtual Platform::int32 Init(
+                Event_handler * handler,
+                Platform::int32 x,
+                Platform::int32 y,
+                Platform::int32 width,
+                Platform::int32 height,
+                const char * title);
+            virtual Platform::int32 Init(
+                Native native,
+                Event_handler * handler);
             virtual void Close();
-			virtual void Release();
+            virtual void Release();
 
-			/* Native */
-			virtual Native Get_native();
+            /* Native */
+            virtual Native Get_native();
             static Window* Get_from_native(HWND wnd);
 
-			/* Event handling */
-			virtual Event_handler * Get_event_handler();
+            /* Event handling */
+            virtual Event_handler * Get_event_handler();
 
-			/* Size and position */
-			virtual void X(Platform::int32 val);
-			virtual void Y(Platform::int32 val);
+            /* Size and position */
+            virtual void X(Platform::int32 val);
+            virtual void Y(Platform::int32 val);
 
-			virtual Platform::int32 X() const;
-			virtual Platform::int32 Y() const;
+            virtual Platform::int32 X() const;
+            virtual Platform::int32 Y() const;
 
-			virtual void Width(Platform::int32 val);
-			virtual void Height(Platform::int32 val);
+            virtual void Width(Platform::int32 val);
+            virtual void Height(Platform::int32 val);
 
-			virtual Platform::int32 Width() const;
-			virtual Platform::int32 Height() const;
+            virtual Platform::int32 Width() const;
+            virtual Platform::int32 Height() const;
 
-			virtual void Client_width(Platform::int32 width);
-			virtual void Client_height(Platform::int32 height);
+            virtual void Client_width(Platform::int32 width);
+            virtual void Client_height(Platform::int32 height);
 
-			virtual Platform::int32 Client_width() const;
-			virtual Platform::int32 Client_height() const;
+            virtual Platform::int32 Client_width() const;
+            virtual Platform::int32 Client_height() const;
 
-			/* Title */
-			virtual void Get_title(std::string & title) const;
-			virtual void Set_title(const std::string & title);
+            /* Title */
+            virtual void Get_title(std::string & title) const;
+            virtual void Set_title(const std::string & title);
 
             virtual Platform::int32 Show();
 
@@ -107,7 +108,7 @@ namespace Window
             LRESULT Handle_event(OS_message & msg);
             Platform::int32 Process_messages();
 
-		private:
+        private:
             void capture_input();
             void disable_input_system();
             void enable_input_system();
@@ -133,7 +134,46 @@ namespace Window
                 LPARAM lParam);
 
             HWND m_native;
-			Event_handler * m_handler;
-		};
-	}
+            Event_handler * m_handler;
+        };
+
+
+        ///////////////////////////////////////////////////////////////
+        class Manager : public ::Window::Manager
+        {
+        public:
+            using shared_window_ptr = typename ::Window::Manager::shared_window_ptr;
+            using weak_window_ptr   = typename ::Window::Manager::weak_window_ptr;
+
+            Manager();
+            virtual ~Manager();
+
+            /* Event processing */
+            virtual Platform::int32 Start_event_processing();
+            virtual Platform::int32 Stop_event_processing();
+            virtual Platform::int32 Process_events();
+
+            /* Window management */
+            virtual weak_window_ptr Create_window();
+            weak_window_ptr Take_ownership(Window* window);
+
+        private:
+            weak_window_ptr attach_window(Window* window);
+            void destroy_windows();
+            void loop();
+
+            //loop
+            enum class loop_state
+            {
+                Unknown,
+                Halt,
+                Stoping,
+                Starting,
+                Run,
+            };
+
+            loop_state m_loop_state;
+            std::deque<shared_window_ptr> m_windows;
+        };
+    }
 }

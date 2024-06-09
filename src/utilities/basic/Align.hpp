@@ -26,38 +26,19 @@
 
 /**
 * @author Adam Œmigielski
-* @file Window_class_register.hpp
+* @file Align.hpp
 **/
 
 #pragma once
 
-#include <Utilities\containers\Singleton.hpp>
 
-namespace Window
-{
-    namespace win64
-    {
-        class Window_class_register : public Containers::Singleton<Window_class_register>
-        {
-            /* Singleton needs access to constructor */
-            friend class Containers::Singleton<Window_class_register>;
+#if (UTILITIES_COMPILER == UTILITIES_COMPIELR_MSVC)
 
-        public:
-            ~Window_class_register();
+#define ALIGN16 _declspec(align(16))
 
-            const char * Get_class_name() const;
+#else /* UTILITIES_COMPILER == UTILITIES_COMPIELR_MSVC */
 
-        private:
-            Window_class_register();
+#define ALIGN16 __attribute__ ((aligned (16)))
 
-            static LRESULT CALLBACK window_procedure(
-                HWND hwnd,
-                UINT msg,
-                WPARAM wParam,
-                LPARAM lParam);
-
-            static const char * s_window_class_name;
-        };
-    }
-}
+#endif /* UTILITIES_COMPILER == UTILITIES_COMPIELR_MSVC */
 

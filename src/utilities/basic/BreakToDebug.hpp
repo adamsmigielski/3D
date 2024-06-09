@@ -10,8 +10,8 @@
 *      distribute, sublicense, and/or sell copies of the Software, and to
 *      permit persons to whom the Software is furnished to do so, subject to
 *      the following conditions: The above copyright notice and this permission
-*      notice shall be included in all copies or substantial portions of the
-*      Software.
+*      notice shall be included in all copies or substantial portions of the 
+*      Software. 
 *
 *
 *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
@@ -26,38 +26,18 @@
 
 /**
 * @author Adam Œmigielski
-* @file Window_class_register.hpp
+* @file BreakToDebug.hpp
 **/
 
 #pragma once
 
-#include <Utilities\containers\Singleton.hpp>
+#if (UTILITIES_COMPILER == UTILITIES_COMPIELR_MSVC)
 
-namespace Window
-{
-    namespace win64
-    {
-        class Window_class_register : public Containers::Singleton<Window_class_register>
-        {
-            /* Singleton needs access to constructor */
-            friend class Containers::Singleton<Window_class_register>;
+#define BREAK_TO_DEBUG __debugbreak()
 
-        public:
-            ~Window_class_register();
+#else /* UTILITIES_COMPILER == UTILITIES_COMPIELR_MSVC */
 
-            const char * Get_class_name() const;
+#define BREAK_TO_DEBUG __asm__ ("int $3\n\t")
 
-        private:
-            Window_class_register();
-
-            static LRESULT CALLBACK window_procedure(
-                HWND hwnd,
-                UINT msg,
-                WPARAM wParam,
-                LPARAM lParam);
-
-            static const char * s_window_class_name;
-        };
-    }
-}
+#endif /* UTILITIES_COMPILER == UTILITIES_COMPIELR_MSVC */
 

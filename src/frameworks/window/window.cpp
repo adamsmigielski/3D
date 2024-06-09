@@ -38,12 +38,12 @@ namespace Window
     ///////////////////////////////////////////////////////////////
     Window::Window()
         : m_user_data(nullptr)
-	{
-		/* Nothing to be done here */
-	}
+    {
+        /* Nothing to be done here */
+    }
 
-	Window::~Window()
-	{
+    Window::~Window()
+    {
         m_user_data = nullptr;
     }
 
@@ -219,55 +219,55 @@ namespace Window
     ////Keyboard
     //bool WindowEventHandler::OnKeyPressed(Ozone::Window::WindowClass * window, const OIS::KeyEvent &arg)
     //{
-    //	return true;
+    //    return true;
     //}
     //
     //bool WindowEventHandler::OnKeyReleased(Ozone::Window::WindowClass * window, const OIS::KeyEvent &arg)
     //{
-    //	return true;
+    //    return true;
     //}
     //
     //
     ////Mouse
     //bool WindowEventHandler::OnMouseMoved(Ozone::Window::WindowClass * window, const OIS::MouseEvent &arg)
     //{
-    //	return true;
+    //    return true;
     //}
     //
     //bool WindowEventHandler::OnMousePressed(Ozone::Window::WindowClass * window, const OIS::MouseEvent &arg, int id)
     //{
-    //	return true;
+    //    return true;
     //}
     //
     //bool WindowEventHandler::OnMouseReleased(Ozone::Window::WindowClass * window, const OIS::MouseEvent &arg, int id)
     //{
-    //	return true;
+    //    return true;
     //}
     //
     //
     ////Joy
     //bool WindowEventHandler::OnButtonPressed(Ozone::Window::WindowClass * window, const OIS::JoyStickEvent &arg, int button)
     //{
-    //	return true;
+    //    return true;
     //}
     //
     //bool WindowEventHandler::OnButtonReleased(Ozone::Window::WindowClass * window, const OIS::JoyStickEvent &arg, int button)
     //{
-    //	return true;
+    //    return true;
     //}
     //
     //bool WindowEventHandler::OnAxisMoved(Ozone::Window::WindowClass * window, const OIS::JoyStickEvent &arg, int axis)
     //{
-    //	return true;
+    //    return true;
     //}
     //
     //bool WindowEventHandler::OnPovMoved(Ozone::Window::WindowClass * window, const OIS::JoyStickEvent &arg, int pov)
     //{
-    //	return true;
+    //    return true;
     //}
     //
     //bool WindowEventHandler::OnVector3Moved(Ozone::Window::WindowClass * window, const OIS::JoyStickEvent &arg, int index)
     //{
-    //	return true;
+    //    return true;
     //}
 }

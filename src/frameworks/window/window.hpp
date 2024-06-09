@@ -33,105 +33,111 @@
 
 namespace Window
 {
-	///////////////////////////////////////////////////////////////
-	// Types
-	enum Returns
-	{
+    ///////////////////////////////////////////////////////////////
+    // Types
+    enum Returns
+    {
         Window_success       = 0,
-		Window_error_generic = -1024,
-	};
+        Window_error_generic = -1,
+        Invalid_object,
+        Invalid_parameter,
+    };
 
 
-	///////////////////////////////////////////////////////////////
-	// Classes
-	class Manager;
-	class Event_handler;
-	class Window;
+    ///////////////////////////////////////////////////////////////
+    // Classes
+    class Manager;
+    class Event_handler;
+    class Window;
 
 
-	///////////////////////////////////////////////////////////////
-	// Definitions
-	///////////////////////////////////////////////////////////////
-	class Window
-	{
-	public:
-		/* Creation and initialization */
-		typedef void * Native;
+    ///////////////////////////////////////////////////////////////
+    // Definitions
+    ///////////////////////////////////////////////////////////////
+    class Window
+    {
+    public:
+        /* Creation and initialization */
+        typedef void * Native;
 
-		Window();
-		virtual ~Window();
+        Window();
+        virtual ~Window();
 
-		virtual Platform::int32 Init(
-			Event_handler * handler,
-			Platform::int32 x,
-			Platform::int32 y,
-			Platform::int32 width,
-			Platform::int32 height,
-			const char * title) = 0;
-		virtual Platform::int32 Init(
-			Native native,
-			Event_handler * handler) = 0;
+        virtual Platform::int32 Init(
+            Event_handler * handler,
+            Platform::int32 x,
+            Platform::int32 y,
+            Platform::int32 width,
+            Platform::int32 height,
+            const char * title) = 0;
+        virtual Platform::int32 Init(
+            Native native,
+            Event_handler * handler) = 0;
         virtual void Close() = 0;
-		virtual void Release() = 0;
+        virtual void Release() = 0;
 
-		/* Native */
-		virtual Native Get_native() = 0;
+        /* Native */
+        virtual Native Get_native() = 0;
 
-		/* Event handling */
-		virtual Event_handler * Get_event_handler() = 0;
+        /* Event handling */
+        virtual Event_handler * Get_event_handler() = 0;
         void * Get_user_data();
         void Set_user_data(void * info);
 
-		/* Size and position */
-		virtual void X(Platform::int32 val) = 0;
-		virtual void Y(Platform::int32 val) = 0;
+        /* Size and position */
+        virtual void X(Platform::int32 val) = 0;
+        virtual void Y(Platform::int32 val) = 0;
 
-		virtual Platform::int32 X() const = 0;
-		virtual Platform::int32 Y() const = 0;
+        virtual Platform::int32 X() const = 0;
+        virtual Platform::int32 Y() const = 0;
 
-		virtual void Width(Platform::int32 val) = 0;
-		virtual void Height(Platform::int32 val) = 0;
+        virtual void Width(Platform::int32 val) = 0;
+        virtual void Height(Platform::int32 val) = 0;
 
-		virtual Platform::int32 Width() const = 0;
-		virtual Platform::int32 Height() const = 0;
+        virtual Platform::int32 Width() const = 0;
+        virtual Platform::int32 Height() const = 0;
 
-		virtual void Client_width(Platform::int32 width) = 0;
-		virtual void Client_height(Platform::int32 height) = 0;
+        virtual void Client_width(Platform::int32 width) = 0;
+        virtual void Client_height(Platform::int32 height) = 0;
 
-		virtual Platform::int32 Client_width() const = 0;
-		virtual Platform::int32 Client_height() const = 0;
+        virtual Platform::int32 Client_width() const = 0;
+        virtual Platform::int32 Client_height() const = 0;
 
         virtual Platform::int32 Show() = 0;
 
-		/* Title */
-		virtual void Get_title(std::string & title) const = 0;
-		virtual void Set_title(const std::string & title) = 0;
+        /* Title */
+        virtual void Get_title(std::string & title) const = 0;
+        virtual void Set_title(const std::string & title) = 0;
 
     private:
         void * m_user_data;
-	};
+    };
 
 
-	///////////////////////////////////////////////////////////////
-	class Manager
-	{
-	public:
-		virtual ~Manager();
-
-		/* Event processing */
-		virtual Platform::int32 Start_event_processing() = 0;
-		virtual Platform::int32 Stop_event_processing() = 0;
-		virtual Platform::int32 Process_events() = 0;
-
-		/* Window management */
-		virtual Window* Create_window() = 0;
-
-	protected:
-		Manager();
-	};
+    ///////////////////////////////////////////////////////////////
+    class Manager
+    {
+    public:
+        using shared_window_ptr = std::shared_ptr<Window>;
+        using weak_window_ptr   = typename shared_window_ptr::weak_type;
 
 
-	/////////////////////////////////////////////////////////////// 
+        virtual ~Manager();
+
+        /* Event processing */
+        virtual Platform::int32 Start_event_processing() = 0;
+        virtual Platform::int32 Stop_event_processing() = 0;
+        virtual Platform::int32 Process_events() = 0;
+
+        /* Window management */
+        virtual weak_window_ptr Create_window() = 0;
+
+    protected:
+        Manager();
+    };
+
+
+    /////////////////////////////////////////////////////////////// 
     class Event_handler
     {
     public:

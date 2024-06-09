@@ -26,55 +26,10 @@
 
 /**
 * @author Adam Œmigielski
-* @file Manager.hpp
+* @file CallConvention.hpp
 **/
 
-#ifndef O8_WS_WINDOWS_MANAGER_HPP
-#define O8_WS_WINDOWS_MANAGER_HPP
+#pragma once
 
-#include <Utilities\containers\IntrusiveList.hpp> /* IntrusiveList::List */
-#include <O8\WS\Manager.hpp>				      /* Manager */
-
-namespace O8
-{
-	namespace WS
-	{
-        class Window_windows;
-
-		class Manager_windows : public Manager, public Containers::IntrusiveList::List<Window_windows>
-		{
-		public:
-            Manager_windows();
-            virtual ~Manager_windows();
-
-            /* Event processing */
-            virtual Platform::int32 Start_event_processing();
-            virtual Platform::int32 Stop_event_processing();
-            virtual Platform::int32 Process_events();
-
-            /* Window management */
-            virtual Window * Create_window();
-
-		private:
-			void destroy_windows();
-			void loop();
-
-			//loop
-			enum class loop_state
-			{
-				Unknown,
-				Halt,
-				Stoping,
-				Starting,
-				Run,
-			};
-
-			loop_state m_loop_state;
-		};
-	}
-}
-
-/* DL entry points */
-UTILITIES_API_DECORATION DLL_EXPORT O8::WS::Manager * UTILITIES_API Create_manager();
-
-#endif /* O8_WS_WINDOWS_MANAGER_HPP */
+#define UTILITIES_API_DECORATION extern "C"
+#define UTILITIES_API __cdecl

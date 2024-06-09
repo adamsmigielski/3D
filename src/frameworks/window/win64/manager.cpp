@@ -29,96 +29,115 @@
 * @file Manager.hpp
 **/
 
-#include "PCH.hpp"
+#include "pch.hpp"
 
-#include "Manager_windows.hpp"
-#include "Window_windows.hpp"
+#include "window.hpp"
 
-#include <O8\Thread\Loader.hpp>
 
-namespace O8
+namespace Window
 {
-    namespace WS
+    namespace win64
     {
-        Manager_windows::Manager_windows()
-			: m_loop_state(loop_state::Halt)
+        Manager::Manager()
+            : m_loop_state(loop_state::Halt)
         {
         }
 
-        Manager_windows::~Manager_windows()
+        Manager::~Manager()
         {
-			Stop_event_processing();
+            Stop_event_processing();
 
             m_loop_state = loop_state::Unknown;
 
-			destroy_windows();
-		}
+            destroy_windows();
+        }
 
-        Platform::int32 Manager_windows::Start_event_processing()
+        Platform::int32 Manager::Start_event_processing()
         {
             if (loop_state::Halt != m_loop_state)
             {
                 ASSERT(0);
 
                 ERRLOG("Event processing already started");
-				return Utilities::Invalid_object;
+                return Returns::Invalid_object;
             }
 
             loop();
 
-            return Utilities::Success;
+            return Returns::Window_success;
         }
 
-		Platform::int32 Manager_windows::Stop_event_processing()
+        Platform::int32 Manager::Stop_event_processing()
         {
             if (loop_state::Run == m_loop_state)
             {
                 m_loop_state = loop_state::Stoping;
-                return Utilities::Success;
+                return Returns::Window_success;
             }
             else
             {
                 ERRLOG("Event processing not started");
-				return Utilities::Invalid_object;
+                return Returns::Invalid_object;
             }
         }
 
-		Platform::int32 Manager_windows::Process_events()
+        Platform::int32 Manager::Process_events()
         {
-            for (auto it = First();
-                nullptr != it;
-                it = it->Next())
+            for (auto& ptr : m_windows)
             {
-                it->Process_messages();
+                auto* window = dynamic_cast<Window*>(ptr.get());
+                window->Process_messages();
             }
 
-            return Utilities::Success;
+            return Returns::Window_success;
         }
 
 
         /* Window management */
-        Window * Manager_windows::Create_window()
+        Manager::weak_window_ptr Manager::Create_window()
         {
-            auto wnd = new Window_windows();
+            auto wnd = new Window();
 
             if (nullptr == wnd)
             {
                 ASSERT(0);
                 ERRLOG("Failed to allocate memory");
-                return nullptr;
+                return weak_window_ptr();
             }
+            attach_window(wnd);
 
-            Attach(wnd);
-
-            return wnd;
+            return attach_window(wnd);
         }
 
-        void Manager_windows::destroy_windows()
+        Manager::weak_window_ptr Manager::Take_ownership(Window* window)
         {
-            Clear();
+            for (auto& ptr : m_windows)
+            {
+                if (ptr.get() == window)
+                {
+                    //return weak_window_ptr(ptr);
+                    return weak_window_ptr();
+                }
+            }
+            
+            return attach_window(window);
         }
 
-        void Manager_windows::loop()
+        Manager::weak_window_ptr Manager::attach_window(Window* window)
+        {
+            //auto ptr = std::make_shared<Window>(window);
+            shared_window_ptr ptr(window);
+            m_windows.push_back(ptr);
+            //return weak_window_ptr(m_windows.back());
+            return weak_window_ptr(ptr);
+        }
+
+        void Manager::destroy_windows()
+        {
+            m_windows.clear();
+        }
+
+        void Manager::loop()
         {
             m_loop_state = loop_state::Starting;
 
@@ -129,12 +148,12 @@ namespace O8
             while (loop_state::Run == m_loop_state)
             {
                 //Update windows
-                if (Utilities::Success != Process_events())
+                if (Returns::Window_success != Process_events())
                 {
                     break;
                 }
 
-                Thread::Give_up();
+                std::this_thread::yield();
             }
 
             LOG("Window's Manager's loop stop");
@@ -142,10 +161,4 @@ namespace O8
             m_loop_state = loop_state::Halt;
         }
     }
-}
-
-/* DL entry points */
-O8::WS::Manager * UTILITIES_API Create_manager()
-{
-    return new O8::WS::Manager_windows;
 }

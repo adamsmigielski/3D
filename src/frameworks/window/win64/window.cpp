@@ -26,38 +26,38 @@
 
 /**
 * @author Adam Œmigielski
-* @file Window_windows.cpp
+* @file Window.cpp
 **/
 
 #include "PCH.hpp"
 
-#include "Window_windows.hpp"
+#include "window.hpp"
 #include "Window_class_register.hpp"
 
-namespace O8
+namespace Window
 {
-	namespace WS
-	{
-		Window_windows::Window_windows()
+    namespace win64
+    {
+        Window::Window()
             : m_native(NULL)
-			, m_handler(nullptr)
-		{
-			/* Nothing to be done here */
-		}
+            , m_handler(nullptr)
+        {
+            /* Nothing to be done here */
+        }
 
-		Window_windows::~Window_windows()
-		{
-			release();
-		}
+        Window::~Window()
+        {
+            release();
+        }
 
-		Platform::int32 Window_windows::Init(
-			Window_event_handler * handler,
-			Platform::int32 x,
-			Platform::int32 y,
-			Platform::int32 width,
-			Platform::int32 height,
-			const char * title)
-		{
+        Platform::int32 Window::Init(
+            Event_handler * handler,
+            Platform::int32 x,
+            Platform::int32 y,
+            Platform::int32 width,
+            Platform::int32 height,
+            const char * title)
+        {
             auto wcs = Window_class_register::Get_singleton();
 
             HWND hwnd = CreateWindowEx(
@@ -78,11 +78,11 @@ namespace O8
             {
                 ASSERT(0);
                 ERRLOG("CreateWindowEx - err: " << GetLastError());
-                return Utilities::Failure;
+                return Returns::Window_error_generic;
             }
 
             auto ret = Init((Native) &hwnd, handler);
-            if (Utilities::Success != ret)
+            if (Returns::Window_success != ret)
             {
                 ASSERT(0);
                 ERRLOG("Failed to initialize window");
@@ -90,22 +90,22 @@ namespace O8
             }
 
             return ret;
-		}
+        }
 
-		Platform::int32 Window_windows::Init(
-			Native native,
-			Window_event_handler * handler)
-		{
+        Platform::int32 Window::Init(
+            Native native,
+            Event_handler * handler)
+        {
             if (NULL != m_native)
             {
                 ASSERT(0);
-				return Utilities::Invalid_object;
+                return Returns::Invalid_object;
             }
 
             if (nullptr == native)
             {
                 ASSERT(0);
-				return Utilities::Invalid_parameter;
+                return Returns::Invalid_parameter;
             }
 
             HWND * p_hwnd = (HWND *) native;
@@ -115,7 +115,7 @@ namespace O8
             if (NULL == m_native)
             {
                 ASSERT(0);
-				return Utilities::Invalid_parameter;
+                return Returns::Invalid_parameter;
             }
 
             if (nullptr != m_handler)
@@ -130,7 +130,7 @@ namespace O8
                         ASSERT(0);
                         ERRLOG("Failed to store this pointer in window object: " << err);
                         m_native = 0;
-						return Utilities::Failure;
+                        return Returns::Window_error_generic;
                     }
                 }
 
@@ -143,17 +143,17 @@ namespace O8
                         ASSERT(0);
                         ERRLOG("Failed to set window procedure: " << err);
                         m_native = 0;
-						return Utilities::Failure;
+                        return Returns::Window_error_generic;
                     }
                 }
 
                 m_handler->On_init(this);
             }
 
-            return Utilities::Success;
-		}
+            return Returns::Window_success;
+        }
 
-        void Window_windows::Close()
+        void Window::Close()
         {
             SendMessage(
                 m_native,
@@ -162,40 +162,40 @@ namespace O8
                 0);
         }
 
-		void Window_windows::Release()
-		{
-			release();
-		}
-
-		Window::Native Window_windows::Get_native()
-		{
-			return &m_native;
-        }
-
-        Window_windows * Window_windows::Get_from_native(HWND wnd)
+        void Window::Release()
         {
-            return (Window_windows *) GetWindowLongPtr(wnd, GWLP_USERDATA);;
+            release();
         }
 
-		Window_event_handler * Window_windows::Get_event_handler()
-		{
-			return m_handler;
-		}
-
-		void Window_windows::X(Platform::int32 val)
-		{
-			RECT rect;
-			GetWindowRect(m_native, &rect);
-			MoveWindow(
-				m_native,				/* handle */
-				val,				    /* x */
-				rect.top,				/* y */
-				rect.right - rect.left,	/* w */
-				rect.bottom - rect.top,	/* h */
-				false);					/* repaint */
+        Window::Native Window::Get_native()
+        {
+            return &m_native;
         }
 
-        Platform::int32 Window_windows::X() const
+        Window * Window::Get_from_native(HWND wnd)
+        {
+            return (Window *) GetWindowLongPtr(wnd, GWLP_USERDATA);;
+        }
+
+        Event_handler * Window::Get_event_handler()
+        {
+            return m_handler;
+        }
+
+        void Window::X(Platform::int32 val)
+        {
+            RECT rect;
+            GetWindowRect(m_native, &rect);
+            MoveWindow(
+                m_native,                /* handle */
+                val,                    /* x */
+                rect.top,                /* y */
+                rect.right - rect.left,    /* w */
+                rect.bottom - rect.top,    /* h */
+                false);                    /* repaint */
+        }
+
+        Platform::int32 Window::X() const
         {
             RECT rect;
             GetWindowRect(m_native, &rect);
@@ -203,20 +203,20 @@ namespace O8
             return rect.left;
         }
 
-		void Window_windows::Y(Platform::int32 val)
-		{
-			RECT rect;
-			GetWindowRect(m_native, &rect);
-			MoveWindow(
-				m_native,				/* handle */
-				rect.left,              /* x */
-				val,		     		/* y */
-				rect.right - rect.left,	/* w */
-				rect.bottom - rect.top,	/* h */
-				false);					/* repaint */
+        void Window::Y(Platform::int32 val)
+        {
+            RECT rect;
+            GetWindowRect(m_native, &rect);
+            MoveWindow(
+                m_native,                /* handle */
+                rect.left,              /* x */
+                val,                     /* y */
+                rect.right - rect.left,    /* w */
+                rect.bottom - rect.top,    /* h */
+                false);                    /* repaint */
         }
 
-        Platform::int32 Window_windows::Y() const
+        Platform::int32 Window::Y() const
         {
             RECT rect;
             GetWindowRect(m_native, &rect);
@@ -224,24 +224,24 @@ namespace O8
             return rect.top;
         }
 
-        void Window_windows::Width(Platform::int32 val)
+        void Window::Width(Platform::int32 val)
         {
             RECT rect;
             GetWindowRect(m_native, &rect);
             MoveWindow(
-                m_native,				/* handle */
+                m_native,                /* handle */
                 rect.left,              /* x */
-                rect.top,	     		/* y */
-                val,                   	/* w */
-                rect.bottom - rect.top,	/* h */
-                false);					/* repaint */
+                rect.top,                 /* y */
+                val,                       /* w */
+                rect.bottom - rect.top,    /* h */
+                false);                    /* repaint */
 
             update_input_system(
                 val,
                 rect.bottom - rect.top);
         }
 
-        Platform::int32 Window_windows::Width() const
+        Platform::int32 Window::Width() const
         {
             RECT rect;
             GetWindowRect(m_native, &rect);
@@ -249,24 +249,24 @@ namespace O8
             return rect.right - rect.left;
         }
 
-        void Window_windows::Height(Platform::int32 val)
+        void Window::Height(Platform::int32 val)
         {
             RECT rect;
             GetWindowRect(m_native, &rect);
             MoveWindow(
-                m_native,				/* handle */
+                m_native,                /* handle */
                 rect.left,              /* x */
-                rect.top,	     		/* y */
-                rect.right - rect.left,	/* w */
-                val,                   	/* h */
-                false);					/* repaint */
+                rect.top,                 /* y */
+                rect.right - rect.left,    /* w */
+                val,                       /* h */
+                false);                    /* repaint */
 
             update_input_system(
                 rect.right - rect.left,
                 val);
         }
 
-        Platform::int32 Window_windows::Height() const
+        Platform::int32 Window::Height() const
         {
             RECT rect;
             GetWindowRect(m_native, &rect);
@@ -274,7 +274,7 @@ namespace O8
             return rect.bottom - rect.top;
         }
 
-        void Window_windows::Client_width(Platform::int32 val)
+        void Window::Client_width(Platform::int32 val)
         {
             RECT rect;
             WINDOWINFO info;
@@ -289,19 +289,19 @@ namespace O8
                 IsMenu(GetMenu(m_native)));
 
             MoveWindow(
-                m_native,				/* handle */
+                m_native,                /* handle */
                 rect.left,              /* x */
-                rect.top,	     		/* y */
-                rect.right - rect.left,	/* w */
-                rect.bottom - rect.top,	/* h */
-                false);					/* repaint */
+                rect.top,                 /* y */
+                rect.right - rect.left,    /* w */
+                rect.bottom - rect.top,    /* h */
+                false);                    /* repaint */
 
             update_input_system(
                 rect.right - rect.left,
                 rect.bottom - rect.top);
         }
 
-        Platform::int32 Window_windows::Client_width() const
+        Platform::int32 Window::Client_width() const
         {
             RECT rect;
             GetClientRect(m_native, &rect);
@@ -309,7 +309,7 @@ namespace O8
             return rect.right - rect.left;
         }
 
-        void Window_windows::Client_height(Platform::int32 val)
+        void Window::Client_height(Platform::int32 val)
         {
             RECT rect;
             WINDOWINFO info;
@@ -324,19 +324,19 @@ namespace O8
                 IsMenu(GetMenu(m_native)));
 
             MoveWindow(
-                m_native,				/* handle */
+                m_native,                /* handle */
                 rect.left,              /* x */
-                rect.top,	     		/* y */
-                rect.right - rect.left,	/* w */
-                rect.bottom - rect.top,	/* h */
-                false);					/* repaint */
+                rect.top,                 /* y */
+                rect.right - rect.left,    /* w */
+                rect.bottom - rect.top,    /* h */
+                false);                    /* repaint */
 
             update_input_system(
                 rect.right - rect.left,
                 rect.bottom - rect.top);
         }
 
-        Platform::int32 Window_windows::Client_height() const
+        Platform::int32 Window::Client_height() const
         {
             RECT rect;
             GetClientRect(m_native, &rect);
@@ -344,7 +344,7 @@ namespace O8
             return rect.bottom - rect.top;
         }
 
-        void Window_windows::Get_title(std::string & title) const
+        void Window::Get_title(std::string & title) const
         {
             int length = GetWindowTextLength(m_native);
             title.reserve(length + 1);
@@ -352,19 +352,19 @@ namespace O8
             GetWindowText(m_native, (char *)title.c_str(), length + 1);
         }
 
-        void Window_windows::Set_title(const std::string & title)
+        void Window::Set_title(const std::string & title)
         {
             SetWindowText(m_native, title.c_str());
         }
 
-        Platform::int32 Window_windows::Show()
+        Platform::int32 Window::Show()
         {
             ShowWindow(m_native, SW_SHOW);
 
-            return Utilities::Success;
+            return Returns::Window_success;
         }
 
-        LRESULT Window_windows::Handle_event(OS_message & msg)
+        LRESULT Window::Handle_event(OS_message & msg)
         {
             LRESULT ret = 0;
 
@@ -425,7 +425,7 @@ namespace O8
             return ret;
         }
 
-        Platform::int32 Window_windows::Process_messages()
+        Platform::int32 Window::Process_messages()
         {
             MSG msg;
             BOOL ret;
@@ -455,11 +455,11 @@ namespace O8
             return Msg_prc_Successfull;
         }
 
-        void Window_windows::capture_input(){}
-        void Window_windows::disable_input_system(){}
-        void Window_windows::enable_input_system(){}
+        void Window::capture_input(){}
+        void Window::disable_input_system(){}
+        void Window::enable_input_system(){}
 
-        LRESULT Window_windows::on_wm_activate(OS_message & msg)
+        LRESULT Window::on_wm_activate(OS_message & msg)
         {
             switch (msg.wParam)
             {
@@ -481,7 +481,7 @@ namespace O8
                 msg.lParam);
         }
 
-        LRESULT Window_windows::on_wm_close(OS_message & msg)
+        LRESULT Window::on_wm_close(OS_message & msg)
         {
             bool close_window = true;
 
@@ -497,14 +497,14 @@ namespace O8
             return 0;
         }
 
-        LRESULT Window_windows::on_wm_command(OS_message & msg)
+        LRESULT Window::on_wm_command(OS_message & msg)
         {
             Platform::uint16 type;
             Platform::uint16 id;
             static const Platform::uint16 MENU_TYPE = 0;
 
-			type = (Platform::uint16)HIWORD(msg.wParam);
-			id = (Platform::uint16)LOWORD(msg.wParam);
+            type = (Platform::uint16)HIWORD(msg.wParam);
+            id = (Platform::uint16)LOWORD(msg.wParam);
 
             if (MENU_TYPE == type)
             {
@@ -520,14 +520,14 @@ namespace O8
                 msg.lParam);
         }
 
-        LRESULT Window_windows::on_wm_destroy(OS_message & msg)
+        LRESULT Window::on_wm_destroy(OS_message & msg)
         {
             release();
 
             return 0;
         }
 
-        LRESULT Window_windows::on_wm_move(OS_message & msg)
+        LRESULT Window::on_wm_move(OS_message & msg)
         {
             Platform::int32 x = (Platform::int32)(short)LOWORD(msg.lParam);
             Platform::int32 y = (Platform::int32)(short)HIWORD(msg.lParam);
@@ -544,7 +544,7 @@ namespace O8
                 msg.lParam);
         }
 
-        LRESULT Window_windows::on_wm_moving(OS_message & msg)
+        LRESULT Window::on_wm_moving(OS_message & msg)
         {
             RECT * rect = (RECT *)msg.lParam;
             int left = rect->left;
@@ -571,7 +571,7 @@ namespace O8
                 msg.lParam);
         }
 
-        LRESULT Window_windows::on_wm_power_broadcast(OS_message & msg)
+        LRESULT Window::on_wm_power_broadcast(OS_message & msg)
         {
             switch (msg.wParam)
             {
@@ -592,7 +592,7 @@ namespace O8
                 msg.lParam);
         }
 
-        LRESULT Window_windows::on_wm_paint(OS_message & msg)
+        LRESULT Window::on_wm_paint(OS_message & msg)
         {
             m_handler->On_paint(this);
 
@@ -603,7 +603,7 @@ namespace O8
                 msg.lParam);
         }
 
-        LRESULT Window_windows::on_wm_quit(OS_message & msg)
+        LRESULT Window::on_wm_quit(OS_message & msg)
         {
             m_handler->On_quit(this);
 
@@ -614,10 +614,10 @@ namespace O8
                 msg.lParam);
         }
 
-        LRESULT Window_windows::on_wm_sizing(OS_message & msg)
+        LRESULT Window::on_wm_sizing(OS_message & msg)
         {
             RECT * rect = (RECT *)msg.lParam;
-            Window_event_handler::Sizing_direction direction;
+            Event_handler::Sizing_direction direction;
             int left = rect->left;
             int right = rect->right;
             int top = rect->top;
@@ -626,28 +626,28 @@ namespace O8
             switch (msg.wParam)
             {
             case WMSZ_BOTTOM:
-                direction = Window_event_handler::Sizing_direction::Bottom;
+                direction = Event_handler::Sizing_direction::Bottom;
                 break;
             case WMSZ_BOTTOMLEFT:
-                direction = Window_event_handler::Sizing_direction::Bottom_left;
+                direction = Event_handler::Sizing_direction::Bottom_left;
                 break;
             case WMSZ_LEFT:
-                direction = Window_event_handler::Sizing_direction::Left;
+                direction = Event_handler::Sizing_direction::Left;
                 break;
             case WMSZ_TOPLEFT:
-                direction = Window_event_handler::Sizing_direction::Top_left;
+                direction = Event_handler::Sizing_direction::Top_left;
                 break;
             case WMSZ_TOP:
-                direction = Window_event_handler::Sizing_direction::Top;
+                direction = Event_handler::Sizing_direction::Top;
                 break;
             case WMSZ_TOPRIGHT:
-                direction = Window_event_handler::Sizing_direction::Top_right;
+                direction = Event_handler::Sizing_direction::Top_right;
                 break;
             case WMSZ_RIGHT:
-                direction = Window_event_handler::Sizing_direction::Right;
+                direction = Event_handler::Sizing_direction::Right;
                 break;
             case WMSZ_BOTTOMRIGHT:
-                direction = Window_event_handler::Sizing_direction::Bottom_right;
+                direction = Event_handler::Sizing_direction::Bottom_right;
                 break;
             }
 
@@ -672,7 +672,7 @@ namespace O8
                 msg.lParam);
         }
 
-        LRESULT Window_windows::on_wm_size(OS_message & msg)
+        LRESULT Window::on_wm_size(OS_message & msg)
         {
             Platform::uint32 width = (Platform::uint32)(short)LOWORD(msg.lParam);
             Platform::uint32 height = (Platform::uint32)(short)HIWORD(msg.lParam);
@@ -738,7 +738,7 @@ namespace O8
                 msg.lParam);
         }
 
-        void Window_windows::release()
+        void Window::release()
         {
             /* This routine will be re-entered by DestroyWindow */
             HWND wnd = m_native;
@@ -758,13 +758,13 @@ namespace O8
             }
         }
 
-        void Window_windows::update_input_system(
+        void Window::update_input_system(
             Platform::int32 w,
             Platform::int32 h)
         {
         }
 
-        LRESULT Window_windows::window_procedure(
+        LRESULT Window::window_procedure(
             HWND hwnd,
             UINT msg,
             WPARAM wParam,

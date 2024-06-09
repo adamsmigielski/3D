@@ -7,8 +7,8 @@
 *      copy of this software and associated documentation files (the
 *      "Software"), to deal in the Software without restriction, including
 *      without limitation the rights to use, copy, modify, merge, publish,
-*      distribute, sublicense, and/or sell copies of the Software, and to
-*      permit persons to whom the Software is furnished to do so, subject to
+*      distribute, sublicense, and/or sell copies of the Software, and to 
+*      permit persons to whom the Software is furnished to do so, subject to 
 *      the following conditions: The above copyright notice and this permission
 *      notice shall be included in all copies or substantial portions of the
 *      Software.
@@ -26,38 +26,14 @@
 
 /**
 * @author Adam Œmigielski
-* @file Window_class_register.hpp
+* @file Assert.hpp
 **/
 
 #pragma once
 
-#include <Utilities\containers\Singleton.hpp>
-
-namespace Window
-{
-    namespace win64
-    {
-        class Window_class_register : public Containers::Singleton<Window_class_register>
-        {
-            /* Singleton needs access to constructor */
-            friend class Containers::Singleton<Window_class_register>;
-
-        public:
-            ~Window_class_register();
-
-            const char * Get_class_name() const;
-
-        private:
-            Window_class_register();
-
-            static LRESULT CALLBACK window_procedure(
-                HWND hwnd,
-                UINT msg,
-                WPARAM wParam,
-                LPARAM lParam);
-
-            static const char * s_window_class_name;
-        };
-    }
-}
+#ifdef NDEBUG
+    # define ASSERT(expr) ((void)0)
+#else
+    # define ASSERT(expr) if (false == (expr)) BREAK_TO_DEBUG
+#endif
 

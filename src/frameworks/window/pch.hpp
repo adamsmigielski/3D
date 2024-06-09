@@ -31,12 +31,13 @@
  
 #pragma once
 
+#include <iostream>
+#include <memory>
+#include <string>
+
 #include <platform.hpp>
 
-//#include <Utilities\basic\Assert.hpp>
-//#include <Utilities\basic\BreakToDebug.hpp>
-//#include <Utilities\basic\CallConvention.hpp>
-//
-//#include <list>
-#include <string>
+#include <utilities\basic\Assert.hpp>
+#include <Utilities\basic\BreakToDebug.hpp>
+#include <Utilities\basic\Log.hpp>
 

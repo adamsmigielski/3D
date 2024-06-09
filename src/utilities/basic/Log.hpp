@@ -26,38 +26,24 @@
 
 /**
 * @author Adam Œmigielski
-* @file Window_class_register.hpp
+* @file Log.hpp
 **/
 
 #pragma once
 
-#include <Utilities\containers\Singleton.hpp>
+#define LOG(msg) std::clog << "LOG     " << msg << std::endl;
+#define ERRLOG(msg) std::clog << "ERROR   " << __FILE__ << ":" << __LINE__ << "\t" << msg << std::endl;
 
-namespace Window
+#ifdef NDEBUG
+#define DEBUGLOG(msg)
+#else
+#define DEBUGLOG(msg) std::clog << "DEBUG   " << __FILE__ << ":" << __LINE__ << ":" << __FUNCTION__ << "\t" << msg << std::endl;
+#endif
+
+#define CONTLOG(msg) std::clog << "\\       " << __FILE__ << ":" << __LINE__ << "\t" << msg << std::endl;
+
+namespace Utilities
 {
-    namespace win64
-    {
-        class Window_class_register : public Containers::Singleton<Window_class_register>
-        {
-            /* Singleton needs access to constructor */
-            friend class Containers::Singleton<Window_class_register>;
-
-        public:
-            ~Window_class_register();
-
-            const char * Get_class_name() const;
-
-        private:
-            Window_class_register();
-
-            static LRESULT CALLBACK window_procedure(
-                HWND hwnd,
-                UINT msg,
-                WPARAM wParam,
-                LPARAM lParam);
-
-            static const char * s_window_class_name;
-        };
-    }
+    
 }
 

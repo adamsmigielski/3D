@@ -32,15 +32,8 @@
  
 #pragma once
 
-#include <iostream>
-#include <string>
-
-#include <platform.hpp>
-
-//#include <Utilities\basic\Assert.hpp>
-//#include <Utilities\basic\BreakToDebug.hpp>
-//#include <Utilities\basic\CallConvention.hpp>
-//#include <Utilities\basic\ErrorCodes.hpp>
-//#include <Utilities\basic\Log.hpp>
-
+#include "../pch.hpp"
+#include <algorithm>
+#include <deque>
+#include <thread>
 #include <Windows.h>

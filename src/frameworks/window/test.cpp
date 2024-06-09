@@ -87,20 +87,20 @@ public:
         return m_init;
     }
 
-	Platform::uint32 GetRelease()
+    Platform::uint32 GetRelease()
     {
         return m_release;
     }
 
-	virtual void On_init(
-		O8::WS::Window * window)
-	{
+    virtual void On_init(
+        O8::WS::Window * window)
+    {
         window->Show();
 
         m_init += 1;
     }
 
-	virtual Platform::int32 On_close(
+    virtual Platform::int32 On_close(
         O8::WS::Window * window,
         bool & should_window_close)
     {
@@ -123,7 +123,7 @@ private:
     O8::WS::Manager * m_manager;
     Platform::uint32 m_close;
     Platform::uint32 m_init;
-	Platform::uint32 m_release;
+    Platform::uint32 m_release;
 };
 
 WS_test_enviroment WS_test_enviroment::s_ws_test_enviroment;
@@ -132,7 +132,7 @@ UNIT_TEST(ws_creation_and_closing)
 {
     WS_test_event_handler handler;
 
-	O8::WS::Manager * ws_manager = O8::WS::Create_manager();
+    O8::WS::Manager * ws_manager = O8::WS::Create_manager();
     TEST_ASSERT_NOT_EQUAL((O8::WS::Manager * )nullptr, ws_manager);
     handler.Init(ws_manager);
 
